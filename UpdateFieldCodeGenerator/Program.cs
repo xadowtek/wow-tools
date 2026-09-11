@@ -418,11 +418,11 @@ namespace UpdateFieldCodeGenerator
             if (typeof(DynamicUpdateField).IsAssignableFrom(fieldType.Type))
                 return CreateTypeOrder.JamDynamicField;
 
-            if (typeof(bool).IsAssignableFrom(fieldType.Type))
-                return CreateTypeOrder.Bits;
-
             if (typeof(BlzOptionalField).IsAssignableFrom(fieldType.Type))
                 return CreateTypeOrder.Optional;
+
+            if (typeof(bool).IsAssignableFrom(fieldType.Type) || typeof(Bits).IsAssignableFrom(fieldType.Type))
+                return CreateTypeOrder.Bits;
 
             if (fieldType.Type.IsArray)
             {
