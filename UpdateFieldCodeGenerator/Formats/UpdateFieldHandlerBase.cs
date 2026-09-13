@@ -112,7 +112,14 @@ namespace UpdateFieldCodeGenerator.Formats
         public abstract IReadOnlyList<FlowControlBlock> OnOptionalFieldInitCreate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
         public abstract IReadOnlyList<FlowControlBlock> OnOptionalFieldInitUpdate(string name, UpdateField updateField, IReadOnlyList<FlowControlBlock> previousControlFlow);
 
-        public abstract void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow, string tag);
+        public void FinishControlBlocks(string tag)
+        {
+            _fieldWrites.Add((RenameField(tag), false, (pcf) =>
+            {
+                FinishControlBlocks(_source, pcf);
+                return new List<FlowControlBlock>();
+            }));
+        }
 
         public abstract void FinishBitPack(string tag);
 

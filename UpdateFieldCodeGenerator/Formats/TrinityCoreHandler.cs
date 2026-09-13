@@ -993,16 +993,6 @@ namespace UpdateFieldCodeGenerator.Formats
                 _header.WriteLine($"    struct {name}Tag : ViewerDependentValueTag<{typeName}> {{}};");
         }
 
-        public override void FinishControlBlocks(IReadOnlyList<FlowControlBlock> previousControlFlow, string tag)
-        {
-            _fieldWrites.Add((RenameField(tag), false, (pcf) =>
-            {
-                FinishControlBlocks(_source, pcf);
-                return new List<FlowControlBlock>();
-            }
-            ));
-        }
-
         public override void FinishBitPack(string tag)
         {
             _fieldWrites.Add((tag != null ? RenameField(tag) : "FinishBitPack", false, (pcf) =>

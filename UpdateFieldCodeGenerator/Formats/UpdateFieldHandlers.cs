@@ -89,7 +89,7 @@
 
         public void FinishControlBlocksIn(IUpdateFieldHandler handler, string tag)
         {
-            handler.FinishControlBlocks(_previousControlFlowDict[handler], tag);
+            handler.FinishControlBlocks(tag);
             _previousControlFlowDict[handler] = null;
         }
 
