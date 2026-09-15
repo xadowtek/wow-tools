@@ -9,6 +9,7 @@
         public static readonly UpdateField m_attachParentGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_flags = new UpdateField(typeof(byte), UpdateFieldFlag.None);
         public static readonly UpdateField m_persistedData = new UpdateField(typeof(BlzOptionalField<JamMirrorDecorStoragePersistedData_C>), UpdateFieldFlag.None);
+        public static readonly UpdateField m_petInfo = new UpdateField(typeof(BlzOptionalField<JamMirrorDecorPetInfo_C>), UpdateFieldFlag.None);
         public static readonly UpdateField m_targetGameObjectGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
     }
 }

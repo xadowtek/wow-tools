@@ -10,6 +10,7 @@
         public static readonly UpdateField m_field_88 = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_field_C0 = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_field_F8 = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.Owner);
+        public static readonly UpdateField m_field_130 = new UpdateField(typeof(DynamicUpdateField<WowGuid>), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_charter = new UpdateField(typeof(JamMirrorNeighborhoodCharter_C), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_editorMode = new UpdateField(typeof(byte), UpdateFieldFlag.Owner);
         public static readonly UpdateField m_neighborhoodOwnershipTransfer = new UpdateField(typeof(JamMirrorNeighborhoodOwnershipTransfer_C), UpdateFieldFlag.Owner);

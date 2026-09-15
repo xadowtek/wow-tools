@@ -1,7 +1,7 @@
 ﻿namespace UpdateFieldCodeGenerator.Structures
 {
     [HasChangesMask]
-    public class JamMirrorScaleCurve_C
+    public class JamMirrorOverrideCurve_C
     {
         public static readonly UpdateField m_startTimeOffset = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_points = new UpdateField(typeof(Vector2[]), UpdateFieldFlag.None, 2);

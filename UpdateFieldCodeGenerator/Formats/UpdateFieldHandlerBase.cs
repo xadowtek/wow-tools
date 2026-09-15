@@ -252,41 +252,21 @@ namespace UpdateFieldCodeGenerator.Formats
                 moveFieldBeforeField(fieldToMove, false, "OnStructureEnd", false);
             }
 
-            if (_structureType == typeof(CGItemData))
+            void removeField(string fieldToRemove)
             {
-                if (!_create)
-                    moveFieldBeforeField("m_modifiers", false, "m_spellCharges", false);
+                var removedFields = _fieldWrites.RemoveAll(fieldWrite => fieldWrite.Name == fieldToRemove);
+                if (removedFields <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(fieldToRemove), fieldToRemove, "Field not found");
             }
-            else if (_structureType == typeof(JamMirrorUnitAssistActionData_C))
-            {
-                if (_create)
-                    moveFieldToEnd("m_playerName");
-                else
-                    moveFieldBeforeField("m_virtualRealmAddress", false, "m_playerName{0}size()", false);
 
-                FinishBitPack("name_length");
-                moveFieldBeforeField("name_length", false, "m_playerName", false);
-            }
-            else if (_structureType == typeof(CGUnitData))
+            if (_structureType == typeof(JamMirrorUnitAssistActionData_C))
             {
-                if (_create)
-                {
-                    moveFieldToEnd("assistActionData.has_value()");
-                    moveFieldToEnd("assistActionData");
-                }
-                else
-                {
-                    FinishBitPack("FinishBitPack_Optionals");
-                    if (this is WowPacketParserHandler)
-                    {
-                        FinishControlBlocks(null, "FinishControlBlocks_Optionals");
-                        moveFieldBeforeField("FinishControlBlocks_Optionals", false, "assistActionData.has_value()", false);
-                        moveFieldBeforeField("FinishBitPack_Optionals", false, "assistActionData.has_value()", false);
-                    }
-                    else
-                        moveFieldBeforeField("FinishBitPack_Optionals", false, "assistActionData", false);
+                moveFieldAfterField("m_virtualRealmAddress", false, "m_type", false);
 
-                    moveFieldToEnd("virtualItems");
+                if (this is TrinityCoreHandler)
+                {
+                    FinishBitPack("name_length");
+                    moveFieldAfterField("name_length", false, "m_playerName{0}size()", false);
                 }
             }
             else if (_structureType == typeof(JamMirrorQuestLog_C))
@@ -294,302 +274,152 @@ namespace UpdateFieldCodeGenerator.Formats
                 if (_create)
                     moveFieldBeforeField("m_objectiveProgress", false, "m_endTime", false);
             }
-            else if (_structureType == typeof(JamMirrorCTROptions_C))
+            else if (_structureType == typeof(JamMirrorPetCreatureName_C))
             {
-                if (!_create)
-                    moveFieldToEnd("m_conditionalFlags");
-            }
-            else if (_structureType == typeof(JamMirrorLeaverInfo_C))
-            {
-                if (!_create)
-                    moveFieldToEnd("m_isLeaver");
+                if (this is TrinityCoreHandler)
+                {
+                    FinishBitPack("name_length");
+                    moveFieldAfterField("name_length", false, "m_name{0}size()", false);
+                }
             }
             else if (_structureType == typeof(CGPlayerData))
             {
+                moveFieldBeforeField("name", false, "declinedNames", false);
                 if (_create)
                 {
-                    moveFieldToEnd("declinedNames");
                     moveFieldBeforeField("name{0}size()", false, "hasQuestSession", false);
-                    moveFieldBeforeField("declinedNames.has_value()", false, "declinedNames", false);
-                    moveFieldBeforeField("dungeonScore", false, "declinedNames", false);
-                    moveFieldBeforeField("name", false, "declinedNames", false);
-                    moveFieldBeforeField("leaverInfo", false, "declinedNames", false);
-                    moveFieldBeforeField("visibleEquipableSpells", false, "declinedNames", false);
-                    moveFieldBeforeField("petNames", false, "declinedNames", false);
                 }
                 else
                 {
-                    FinishBitPack("FinishBitPack_afterDeclinedNamesBit");
+                    if (this is TrinityCoreHandler)
+                        moveFieldBeforeField("declinedNames.has_value()", false, "WriteUpdate_FinishControlBlocks_Optionals", false);
+                    else
+                        moveFieldAfterField("declinedNames.has_value()", false, "WriteUpdate_FinishBitPack_Optionals", false);
 
-                    moveFieldBeforeField("name{0}size()", false, "partyType", false);
-                    moveFieldBeforeField("declinedNames.has_value()", false, "partyType", false);
-                    moveFieldBeforeField("FinishBitPack_afterDeclinedNamesBit", false, "partyType", false);
-                    moveFieldBeforeField("dungeonScore", false, "partyType", false);
-                    moveFieldBeforeField("name", false, "partyType", false);
-                    moveFieldBeforeField("leaverInfo", false, "partyType", false);
-                    moveFieldBeforeField("declinedNames", false, "partyType", false);
-                    moveFieldToEnd("visibleItems");
-                    moveFieldToEnd("visibleEquipableSpells");
+                    moveFieldBeforeField("name{0}size()", false, "declinedNames.has_value()", false);
+                    return; // don't reorder ResetBitReader in WPP after name size
                 }
             }
             else if (_structureType == typeof(JamMirrorDeclinedNames_C))
             {
-                FinishControlBlocks(null, "SplitBits");
+                FinishControlBlocks("SplitBits");
                 moveFieldBeforeField("SplitBits", false, "m_name", false);
                 if (!_create)
                     moveFieldBeforeField("WriteUpdate_FinishBitPack_after_DynamicField_sizes", false, "m_name", false);
             }
             else if (_structureType == typeof(CGActivePlayerData))
             {
-                moveFieldBeforeField("researchSites", true, "dailyQuestsCompleted", true);
-                moveFieldBeforeField("researchSiteProgress", true, "dailyQuestsCompleted", true);
-                moveFieldBeforeField("research", true, "dailyQuestsCompleted", true);
-                moveFieldBeforeField("researchSites", false, "dailyQuestsCompleted", true);
-                moveFieldBeforeField("researchSiteProgress", false, "dailyQuestsCompleted", true);
-                moveFieldBeforeField("research", false, "dailyQuestsCompleted", true);
+                if (!_create)
+                {
+                    moveFieldAfterField("researchSites", true, "pvpInfo", true);
+                    moveFieldAfterField("researchSiteProgress", true, "researchSites", true);
+                    moveFieldAfterField("research", true, "researchSiteProgress", true);
+                }
+
+                moveFieldAfterField("researchSites", false, "research", true);
+                moveFieldAfterField("researchSiteProgress", false, "researchSites", false);
+                moveFieldAfterField("research", false, "researchSiteProgress", false);
 
                 if (_create)
                 {
-                    moveFieldToEnd("challengeModeData");
-                    moveFieldBeforeField("walkInData", false, "challengeModeData", false);
-                    moveFieldBeforeField("accountBankTabSettings", false, "walkInData", false);
-                    moveFieldBeforeField("characterBankTabSettings", false, "accountBankTabSettings", false);
-                    moveFieldBeforeField("petStable", false, "characterBankTabSettings", false);
+                    moveFieldAfterField("characterBankTabSettings", true, "petStable.has_value()", false);
+                    moveFieldAfterField("accountBankTabSettings", true, "characterBankTabSettings", true);
 
-                    moveFieldBeforeField("transmogMetadata", false, "pvpInfo", false);
-                    moveFieldBeforeField("viewedOutfit", false, "transmogMetadata", false);
-                    moveFieldBeforeField("transmogOutfits", false, "viewedOutfit", false);
-                    moveFieldBeforeField("delveData", false, "transmogOutfits", false);
-                    moveFieldBeforeField("traitConfigs", false, "delveData", false);
-                    moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
+                    moveFieldAfterField("characterBankTabSettings", false, "petStable", false);
+                    moveFieldAfterField("accountBankTabSettings", false, "characterBankTabSettings", false);
                 }
                 else
                 {
-                    FinishControlBlocks(null, "blocks_after_accountBankTabSettings");
+                    // dynamic fields with sizes as bits
+                    FinishControlBlocks("blocks_after_accountBankTabSettings");
                     FinishBitPack("bits_after_accountBankTabSettings");
-                    moveFieldBeforeField("blocks_after_accountBankTabSettings", false, "pvpInfo", false);
-                    moveFieldBeforeField("bits_after_accountBankTabSettings", false, "pvpInfo", false);
+                    moveFieldBeforeField("blocks_after_accountBankTabSettings", false, "farsightObject", false);
+                    moveFieldBeforeField("bits_after_accountBankTabSettings", false, "farsightObject", false);
+                    moveFieldAfterField("characterBankTabSettings", true, "bits_after_accountBankTabSettings", false);
+                    moveFieldAfterField("accountBankTabSettings", true, "characterBankTabSettings", true);
+                    moveFieldAfterField("characterBankTabSettings", false, "accountBankTabSettings", true);
+                    moveFieldAfterField("accountBankTabSettings", false, "characterBankTabSettings", false);
 
-                    moveFieldBeforeField("characterBankTabSettings", true, "blocks_after_accountBankTabSettings", false);
-                    moveFieldBeforeField("accountBankTabSettings", true, "blocks_after_accountBankTabSettings", false);
+                    moveFieldAfterField("questSession.has_value()", false, "WriteUpdate_FinishControlBlocks_Optionals", false);
+                    moveFieldAfterField("petStable.has_value()", false, "questSession.has_value()", false);
+                    moveFieldAfterField("walkInData.has_value()", false, "petStable.has_value()", false);
+                    moveFieldAfterField("challengeModeData.has_value()", false, "walkInData.has_value()", false);
 
-                    FinishControlBlocks(null, "blocks_before_accountBankTabSettings");
-                    FinishBitPack("bits_before_accountBankTabSettings");
-                    moveFieldBeforeField("blocks_before_accountBankTabSettings", false, "characterBankTabSettings", true);
-                    moveFieldBeforeField("bits_before_accountBankTabSettings", false, "characterBankTabSettings", true);
-
-                    moveFieldBeforeField("challengeModeData", false, "invSlots", false);
-                    moveFieldBeforeField("walkInData", false, "challengeModeData", false);
-                    moveFieldBeforeField("petStable", false, "walkInData", false);
-                    moveFieldBeforeField("transmogMetadata", false, "petStable", false);
-                    moveFieldBeforeField("viewedOutfit", false, "transmogMetadata", false);
-                    moveFieldBeforeField("transmogOutfits", false, "viewedOutfit", false);
-                    moveFieldBeforeField("delveData", false, "transmogOutfits", false);
-                    moveFieldBeforeField("traitConfigs", false, "delveData", false);
-                    moveFieldBeforeField("dungeonScore", false, "traitConfigs", false);
-
-                    FinishControlBlocks(null, string.Empty);
-                    FinishBitPack("FinishBitPack_afterResearch");
-
-                    var finishBitPack = _fieldWrites.GetRange(_fieldWrites.Count - 2, 2);
-                    _fieldWrites.RemoveRange(_fieldWrites.Count - 2, 2);
-
-                    var researchIndex = _fieldWrites.FindIndex(fieldWrite => fieldWrite.Name == RenameField("research") && !fieldWrite.IsSize);
-                    _fieldWrites.InsertRange(researchIndex + 1, finishBitPack);
+                    FinishControlBlocks("blocks_after_research");
+                    FinishBitPack("bits_after_research");
+                    moveFieldAfterField("blocks_after_research", false, "research", false);
+                    moveFieldAfterField("bits_after_research", false, "blocks_after_research", false);
                 }
-
-                moveFieldBeforeField("levelLinkInfo", false, "dungeonScore", false);
-                moveFieldBeforeField("frozenPerksVendorItem", false, "levelLinkInfo", false);
-                moveFieldBeforeField("questSession", false, "frozenPerksVendorItem", false);
-                moveFieldBeforeField("researchHistory", false, "questSession", false);
-                moveFieldBeforeField("challengeModeData.has_value()", false, "researchHistory", false);
-                moveFieldBeforeField("walkInData.has_value()", false, "challengeModeData.has_value()", false);
-
-                if (_create)
-                {
-                    moveFieldBeforeField("characterBankTabSettings", true, "walkInData.has_value()", false);
-                    moveFieldBeforeField("accountBankTabSettings", true, "walkInData.has_value()", false);
-                    moveFieldBeforeField("petStable.has_value()", false, "characterBankTabSettings", true);
-                }
-                else
-                {
-                    moveFieldBeforeField("petStable.has_value()", false, "walkInData.has_value()", false);
-                }
-
-                moveFieldBeforeField("questSession.has_value()", false, "petStable.has_value()", false);
-
-                FinishControlBlocks(null, "FinishControlBlocks_Optionals");
-                FinishBitPack("FinishBitPack_Optionals");
-
-                if (!_create && this is WowPacketParserHandler)
-                {
-                    moveFieldBeforeField("FinishControlBlocks_Optionals", false, "questSession.has_value()", false);
-                    moveFieldBeforeField("FinishBitPack_Optionals", false, "questSession.has_value()", false);
-                }
-                else
-                {
-                    moveFieldBeforeField("FinishControlBlocks_Optionals", false, "researchHistory", false);
-                    moveFieldBeforeField("FinishBitPack_Optionals", false, "researchHistory", false);
-                }
-            }
-            else if (_structureType == typeof(JamMirrorPlayerDataElement_C))
-            {
-                if (_create)
-                    moveFieldBeforeField("m_type", false, "m_floatValue", false);
             }
             else if (_structureType == typeof(JamMirrorTraitConfig_C))
             {
                 moveFieldToEnd("m_name");
                 moveFieldBeforeField("m_name{0}size()", false, "m_name", false);
-                if (_create)
-                    moveFieldBeforeField("m_subTrees", false, "m_name", false);
 
-            }
-            else if (_structureType == typeof(JamMirrorTraitSubTreeCache_C))
-            {
-                if (!_create)
-                    moveFieldBeforeField("m_traitSubTreeID", false, "m_entries{0}size()", false);
+                FinishBitPack("name_length");
+                moveFieldRelativeToField("name_length", false, "m_name{0}size()", false, this is WowPacketParserHandler);
 
+                FinishControlBlocks("name_length_block");
+                moveFieldBeforeField("name_length_block", false, "name_length", false);
             }
             else if (_structureType == typeof(JamMirrorCraftingOrder_C))
             {
                 if (_create)
                 {
-                    moveFieldBeforeField("m_data", false, "m_recraftItemInfo", false);
-                    moveFieldBeforeField("m_recraftItemInfo", false, "m_enchantments", false);
                     moveFieldBeforeField("m_recraftItemInfo.has_value()", false, "m_enchantments", true);
+                    moveFieldBeforeField("m_recraftItemInfo", false, "m_enchantments", false);
                 }
-
-                FinishBitPack("FinishBitPack_afterOptionalBit");
-                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_recraftItemInfo", false);
             }
             else if (_structureType == typeof(JamMirrorCraftingOrderData_C))
             {
-                if (_create)
-                {
-                    moveFieldToEnd("m_reagents");
-                    moveFieldToEnd("m_customerNotes");
-                    moveFieldToEnd("m_customer");
-                    moveFieldToEnd("m_npcCustomer");
-                    moveFieldToEnd("m_outputItem");
-                    moveFieldToEnd("m_outputItemData");
+                moveFieldBeforeField("m_customerNotes{0}size()", false, "m_customer.has_value()", false);
+                moveFieldBeforeField("m_customerNotes", false, "m_customer", false);
 
-                    FinishBitPack("FinishBitPack_afterOptionalBit");
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_reagents", false);
+                if (!_create && this is WowPacketParserHandler)
+                {
+                    moveFieldBeforeField("WriteUpdate_FinishControlBlocks_Optionals", false, "m_customerNotes{0}size()", false);
+                    moveFieldBeforeField("WriteUpdate_FinishBitPack_Optionals", false, "m_customerNotes{0}size()", false);
                 }
+
+                return; // don't reorder ResetBitReader in WPP after customerNotes size
             }
             else if (_structureType == typeof(JamMirrorCraftingOrderItem_C))
             {
-                FinishBitPack("FinishBitPack_afterOptionalBit");
-
-                moveFieldToEnd("m_reagent");
-
-                if (this is WowPacketParserHandler)
-                {
-                    FinishControlBlocks(null, "FinishControlBlocks_afterOptionalBit");
-
-                    moveFieldToEnd("FinishControlBlocks_afterOptionalBit");
-                    moveFieldToEnd("FinishBitPack_afterOptionalBit");
-                    moveFieldToEnd("m_dataSlotIndex.has_value()");
-                }
-                else
-                {
-                    moveFieldToEnd("m_dataSlotIndex.has_value()");
-                    moveFieldToEnd("FinishBitPack_afterOptionalBit");
-                }
-
-                moveFieldToEnd("m_dataSlotIndex");
-            }
-            else if (_structureType == typeof(JamMirrorCraftingReagentBase_C))
-            {
-                if (_create)
-                {
-                    moveFieldBeforeField("m_currencyID.has_value()", false, "m_itemID", false);
-                    moveFieldBeforeField("m_itemID.has_value()", false, "m_currencyID.has_value()", false);
-                }
-
-                FinishBitPack("FinishBitPack_afterOptionalBit");
-                moveFieldBeforeField("FinishBitPack_afterOptionalBit", false, "m_itemID", false);
+                if (!_create)
+                    moveFieldAfterField("m_dataSlotIndex.has_value()", false, "m_flags", false);
             }
             else if (_structureType == typeof(JamMirrorStablePetInfo_C))
             {
-                if (!_create)
-                {
-                    moveFieldBeforeField("m_petFlags", false, "m_name{0}size()", false);
-                    moveFieldBeforeField("m_specialization", false, "m_name{0}size()", false);
-                }
+                moveFieldBeforeField("m_petFlags", false, "m_name{0}size()", false);
+                moveFieldBeforeField("m_specialization", false, "m_name{0}size()", false);
+
+                FinishBitPack("name_length");
+                moveFieldRelativeToField("name_length", false, "m_name{0}size()", false, this is WowPacketParserHandler);
+
+                FinishControlBlocks("name_length_block");
+                moveFieldBeforeField("name_length_block", false, "name_length", false);
             }
             else if (_structureType == typeof(JamMirrorBankTabSettings_C))
             {
                 moveFieldBeforeField("m_depositFlags", false, "m_name", false);
                 if (!_create)
                 {
-                    FinishControlBlocks(null, "FinishControlBlocks_after_sizes");
+                    FinishControlBlocks("FinishControlBlocks_after_sizes");
                     moveFieldBeforeField("FinishControlBlocks_after_sizes", false, "m_depositFlags", false);
                     moveFieldBeforeField("WriteUpdate_FinishBitPack_after_DynamicField_sizes", false, "m_depositFlags", false);
                 }
             }
-            else if (_structureType == typeof(JamMirrorWalkInData_C))
-            {
-                if (!_create)
-                    moveFieldBeforeField("m_walkInPartyGUID", false, "m_walkInInstanceType", false);
-            }
-            else if (_structureType == typeof(JamMirrorDelveData_C))
-            {
-                if (!_create)
-                {
-                    moveFieldBeforeField("m_playersEligibleForRewards{0}size()", false, "m_entranceType", false);
-                    moveFieldBeforeField("m_activeOptionalAffixIDs{0}size()", false, "m_entranceType", false);
-                    moveFieldBeforeField("m_playersEligibleForRewards", false, "m_restrictingRewardPlayers", false);
-                    moveFieldBeforeField("m_activeOptionalAffixIDs", false, "m_restrictingRewardPlayers", false);
-                }
-            }
-            else if (_structureType == typeof(JamMirrorTransmogOutfitData_C))
-            {
-                if (!_create)
-                    moveFieldToEnd("outfitInfo");
-            }
             else if (_structureType == typeof(JamMirrorTransmogOutfitDataInfo_C))
             {
+                moveFieldBeforeField("icon", false, "name{0}size()", false);
                 if (_create)
                 {
-                    moveFieldBeforeField("situationsEnabled", false, "WriteCreate_FinishControlBlocks", false);
                     moveFieldToEnd("name");
-                }
-                else
-                {
-                    moveFieldBeforeField("icon", false, "name{0}size()", false);
-                }
-            }
-            else if (_structureType == typeof(JamMirrorTransmogOutfitMetadata_C))
-            {
-                if (!_create)
-                {
-                    moveFieldToEnd("locked");
-                    moveFieldToEnd("WriteUpdate_FinishControlBlocks_after_DynamicField_sizes");
-                    moveFieldToEnd("WriteUpdate_FinishBitPack_after_DynamicField_sizes");
-                }
-            }
-            else if (_structureType == typeof(CGGameObjectData))
-            {
-                if (_create)
-                    moveFieldToEnd("m_assistActionData");
-
-                FinishBitPack("gameobject_optionals");
-                moveFieldBeforeField("gameobject_optionals", false, "m_assistActionData", false);
-            }
-            else if (_structureType == typeof(JamMirrorVisualAnim_C))
-            {
-                moveFieldToEnd("m_animationDataID");
-                if (_create)
-                {
-                    moveFieldBeforeField("m_animationDataID.has_value()", false, "m_animKitID", false);
-                    moveFieldBeforeField("m_isDecay", false, "m_animKitID", false);
-                    moveFieldBeforeField("WriteCreate_FinishBitPack", false, "m_animKitID", false);
-                }
-                else
-                {
-                    moveFieldBeforeField("m_animationDataID.has_value()", false, "WriteUpdate_FinishControlBlocks_after_DynamicField_sizes", false);
+                    if (this is WowPacketParserHandler)
+                    {
+                        moveFieldBeforeField("WriteCreate_FinishControlBlocks", false, "m_name{0}size()", false);
+                        moveFieldBeforeField("WriteCreate_FinishBitPack", false, "m_name{0}size()", false);
+                    }
                 }
             }
             else if (_structureType == typeof(JamMirrorGameObjectAssistActionData_C))
@@ -600,49 +430,39 @@ namespace UpdateFieldCodeGenerator.Formats
                 moveFieldToEnd("m_playerName");
                 moveFieldToEnd("m_monsterName");
             }
-            else if (_structureType == typeof(JamMirrorAreaTriggerSplineCalculator_C))
-            {
-                if (_create)
-                    moveFieldBeforeField("m_catmullrom", false, "m_points", false);
-            }
             else if (_structureType == typeof(CGAreaTriggerData))
+            {
+                if (!_create)
+                {
+                    if (this is TrinityCoreHandler)
+                    {
+                        moveFieldBeforeField("m_targetRollPitchYaw.has_value()", false, "WriteUpdate_FinishControlBlocks_Optionals", false);
+                        moveFieldBeforeField("m_forcedPositionAndRotation.has_value()", false, "WriteUpdate_FinishControlBlocks_Optionals", false);
+                    }
+                    else
+                    {
+                        moveFieldAfterField("m_targetRollPitchYaw.has_value()", false, "WriteUpdate_FinishBitPack_Optionals", false);
+                        moveFieldAfterField("m_forcedPositionAndRotation.has_value()", false, "m_targetRollPitchYaw.has_value()", false);
+                    }
+                }
+            }
+            else if (_structureType == typeof(JamMirrorVisualAnim_C))
             {
                 if (_create)
                 {
-                    FinishBitPack("FinishBitPack_beforeOptionalBits");
-
-                    moveFieldBeforeField("m_overrideScaleCurve", false, "m_caster", false);
-                    moveFieldBeforeField("m_targetRollPitchYaw.has_value()", false, "m_overrideMoveCurveX", false);
-                    moveFieldBeforeField("m_forcedPositionAndRotation.has_value()", false, "m_overrideMoveCurveX", false);
-                    moveFieldBeforeField("FinishBitPack_beforeOptionalBits", false, "m_targetRollPitchYaw.has_value()", false);
-                    moveFieldBeforeField("m_targetRollPitchYaw", false, "m_overrideMoveCurveY", false);
-                    moveFieldBeforeField("m_forcedPositionAndRotation", false, "m_overrideMoveCurveY", false);
+                    moveFieldBeforeField("m_animKitID", false, "m_animationDataID", false);
+                    moveFieldBeforeField("m_serverTime", false, "m_animationDataID", false);
                 }
                 else
                 {
-                    moveFieldToEnd("m_extraScaleCurve");
-                    moveFieldToEnd("m_targetRollPitchYaw.has_value()");
-                    moveFieldToEnd("m_forcedPositionAndRotation.has_value()");
-                    moveFieldToEnd("m_overrideMoveCurveX");
-                    moveFieldToEnd("m_targetRollPitchYaw");
-                    moveFieldToEnd("m_forcedPositionAndRotation");
-                    moveFieldToEnd("m_overrideMoveCurveY");
-                    moveFieldToEnd("m_overrideMoveCurveZ");
-                    moveFieldToEnd("m_unk1205Curve");
-                    moveFieldToEnd("m_visualAnim");
-                    moveFieldToEnd("m_spline");
-                    moveFieldToEnd("m_orbit");
-
-                    FinishBitPack("FinishBitPack_beforeOptionalBits");
-                    FinishControlBlocks(null, "FinishControlBlocks_beforeOptionalBits");
-                    moveFieldBeforeField("FinishControlBlocks_beforeOptionalBits", false, "m_targetRollPitchYaw.has_value()", false);
-                    moveFieldBeforeField("FinishBitPack_beforeOptionalBits", false, "m_targetRollPitchYaw.has_value()", false);
-
-                    FinishBitPack("FinishBitPack_afterOptionalBits");
-                    FinishControlBlocks(null, "FinishControlBlocks_afterOptionalBits");
-                    moveFieldBeforeField("FinishControlBlocks_afterOptionalBits", false, "m_overrideMoveCurveX", false);
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBits", false, "m_overrideMoveCurveX", false);
+                    moveFieldAfterField("m_animationDataID.has_value()", false, "m_isDecay", false);
+                    return; // don't reorder ResetBitReader in WPP after customerNotes size
                 }
+            }
+            else if (_structureType == typeof(JamMirrorAreaTriggerSplineCalculator_C))
+            {
+                if (_create)
+                    moveFieldAfterField("m_linear", false, "m_points", true);
             }
             else if (_structureType == typeof(CGConversationData))
             {
@@ -654,49 +474,37 @@ namespace UpdateFieldCodeGenerator.Formats
             }
             else if (_structureType == typeof(CGMeshObjectData))
             {
-                if (_create)
+                moveFieldBeforeField("m_fileDataID", false, "m_geobox", false);
+                if (!_create)
                 {
-                    moveFieldBeforeField("m_isWMO", false, "m_fileDataID", false);
-                    moveFieldBeforeField("m_isRoom", false, "m_fileDataID", false);
-                    moveFieldBeforeField("m_geobox.has_value()", false, "m_fileDataID", false);
-                }
-                else
-                {
-                    moveFieldBeforeField("m_geobox.has_value()", false, "WriteUpdate_FinishControlBlocks_after_DynamicField_sizes", false);
+                    removeField("WriteUpdate_FinishControlBlocks_after_DynamicField_sizes");
+                    removeField("WriteUpdate_FinishBitPack_after_DynamicField_sizes");
                 }
             }
             else if (_structureType == typeof(JamMirrorDecorStoragePersistedData_C))
             {
-                if (_create)
-                {
-                    moveFieldToEnd("m_dyeSlots");
-                    moveFieldToEnd("m_sourceValue");
-                }
-                else
-                {
-                    moveFieldBeforeField("m_sourceType", false, "m_dyeSlots.has_value()", false);
-                    moveFieldBeforeField("m_sourceValue{0}size()", false, "m_dyeSlots", false);
-                }
+                moveFieldAfterField("m_sourceValue", false, "m_dyeSlots", false);
+                if (!_create)
+                    moveFieldRelativeToField("m_dyeSlots.has_value()", false, "WriteUpdate_FinishControlBlocks_Optionals", false, this is TrinityCoreHandler);
 
-                if (this is TrinityCoreHandler)
-                {
-                    FinishControlBlocks(null, "FinishControlBlocks_afterOptionalBits");
-                    FinishBitPack("FinishBitPack_afterOptionalBits");
-                    moveFieldBeforeField("FinishControlBlocks_afterOptionalBits", false, "m_dyeSlots", false);
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBits", false, "m_dyeSlots", false);
-                }
+                moveFieldAfterField("m_sourceValue{0}size()", false, "m_dyeSlots.has_value()", false);
+            }
+            else if (_structureType == typeof(JamMirrorDecorPetInfo_C))
+            {
+                moveFieldBeforeField("m_petBehavior", false, "m_petName{0}size()", false);
+
+                FinishBitPack("name_length");
+                moveFieldRelativeToField("name_length", false, "m_petName{0}size()", false, this is WowPacketParserHandler);
+
+                FinishControlBlocks("name_length_block");
+                moveFieldBeforeField("name_length_block", false, "name_length", false);
             }
             else if (_structureType == typeof(CGHousingDecorData))
             {
-                if (_create)
-                    moveFieldToEnd("m_persistedData");
-                else
-                    moveFieldBeforeField("m_targetGameObjectGUID", false, "m_persistedData.has_value()", false);
-
-                if (this is TrinityCoreHandler)
+                if (!_create)
                 {
-                    FinishBitPack("FinishBitPack_afterOptionalBits");
-                    moveFieldBeforeField("FinishBitPack_afterOptionalBits", false, "m_persistedData", false);
+                    moveFieldAfterField("m_persistedData.has_value()", false, "WriteUpdate_FinishControlBlocks_Optionals", false);
+                    moveFieldAfterField("m_petInfo.has_value()", false, "m_persistedData.has_value()", false);
                 }
             }
             else if (_structureType == typeof(CGNeighborhoodMirrorData))
@@ -706,40 +514,33 @@ namespace UpdateFieldCodeGenerator.Formats
                 else
                 {
                     FinishBitPack("FinishBitPack_beforeNameLength");
-                    FinishControlBlocks(null, "FinishControlBlocks_beforeNameLength");
+                    FinishControlBlocks("FinishControlBlocks_beforeNameLength");
                     moveFieldBeforeField("FinishControlBlocks_beforeNameLength", false, "m_name{0}size()", false);
                     moveFieldBeforeField("FinishBitPack_beforeNameLength", false, "m_name{0}size()", false);
                 }
             }
             else if (_structureType == typeof(JamMirrorNeighborhoodCharter_C))
             {
-                if (_create)
-                    moveFieldBeforeField("m_name{0}size()", false, "m_name", false);
-                else
-                {
-                    moveFieldBeforeField("field_0", false, "m_signatures{0}size()", false);
-                    moveFieldBeforeField("field_4", false, "m_signatures{0}size()", false);
-                }
+                FinishBitPack("name_length");
+                moveFieldRelativeToField("name_length", false, "m_name{0}size()", false, this is WowPacketParserHandler);
+
+                FinishControlBlocks("name_length_block");
+                moveFieldBeforeField("name_length_block", false, "name_length", false);
             }
             else if (_structureType == typeof(JamMirrorNeighborhoodOwnershipTransfer_C))
             {
-                if (_create)
-                    moveFieldToEnd("m_neighborhoodName");
-
                 FinishBitPack("FinishBitPack_afterLength");
-                moveFieldBeforeField("FinishBitPack_afterLength", false, "m_neighborhoodName", false);
+                moveFieldAfterField("FinishBitPack_afterLength", false, "m_neighborhoodName{0}size()", false);
             }
-            else if (_structureType == typeof(CGPlayerHouseInfoComponentData))
+
+            if (!_create && this is WowPacketParserHandler)
             {
-                moveFieldToEnd("m_charter");
-                moveFieldToEnd("m_neighborhoodOwnershipTransfer");
-            }
-            else if (_structureType == typeof(JamMirrorNICompletedInitiativesEntry_C))
-            {
-                if (!_create)
+                var firstOptional = _fieldWrites.FindIndex(field => field.Name.EndsWith(".has_value()"));
+                if (firstOptional >= 0)
                 {
-                    moveFieldBeforeField("m_initiativeID", false, "m_completedMilestones{0}size()", false);
-                    moveFieldToEnd("m_completed");
+                    var where = _fieldWrites[firstOptional].Name;
+                    moveFieldBeforeField("WriteUpdate_FinishControlBlocks_Optionals", false, where, false);
+                    moveFieldBeforeField("WriteUpdate_FinishBitPack_Optionals", false, where, false);
                 }
             }
         }

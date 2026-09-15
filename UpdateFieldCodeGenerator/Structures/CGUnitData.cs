@@ -29,6 +29,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField target = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetCompanionGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField battlePetDBID = new UpdateField(typeof(ulong), UpdateFieldFlag.None);
+        public static readonly UpdateField battlePetAttachedToDecorGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
+        public static readonly UpdateField battlePetDecorHouseGUID = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField channelData = new UpdateField(typeof(JamMirrorUnitChannel_C), UpdateFieldFlag.None);
         public static readonly UpdateField spellEmpowerStage = new UpdateField(typeof(sbyte), UpdateFieldFlag.None);
         public static readonly UpdateField summonedByHomeRealm = new UpdateField(typeof(uint), UpdateFieldFlag.None);

@@ -7,19 +7,19 @@ namespace UpdateFieldCodeGenerator.Structures
     {
         public static readonly ObjectType ObjectType = ObjectType.AreaTrigger;
 
-        public static readonly UpdateField m_overrideScaleCurve = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
-        public static readonly UpdateField m_extraScaleCurve = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
-        public static readonly UpdateField m_overrideMoveCurveX = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
-        public static readonly UpdateField m_overrideMoveCurveY = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
-        public static readonly UpdateField m_overrideMoveCurveZ = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
-        public static readonly UpdateField m_unk1205Curve = new UpdateField(typeof(JamMirrorScaleCurve_C), UpdateFieldFlag.None);
+        public static readonly UpdateField m_overrideScaleCurve = new UpdateField(typeof(JamMirrorOverrideCurve_C), UpdateFieldFlag.None);
+        public static readonly UpdateField m_extraScaleCurve = new UpdateField(typeof(JamMirrorOverrideCurve_C), UpdateFieldFlag.None);
+        public static readonly UpdateField m_overrideMoveCurveX = new UpdateField(typeof(JamMirrorOverrideCurve_C), UpdateFieldFlag.None);
+        public static readonly UpdateField m_overrideMoveCurveY = new UpdateField(typeof(JamMirrorOverrideCurve_C), UpdateFieldFlag.None);
+        public static readonly UpdateField m_overrideMoveCurveZ = new UpdateField(typeof(JamMirrorOverrideCurve_C), UpdateFieldFlag.None);
+        public static readonly UpdateField m_overrideShapeCurve = new UpdateField(typeof(JamMirrorOverrideCurve_C), UpdateFieldFlag.None);
         public static readonly UpdateField m_caster = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField m_duration = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_timeToTarget = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_timeToTargetScale = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_timeToTargetExtraScale = new UpdateField(typeof(uint), UpdateFieldFlag.None);
         public static readonly UpdateField m_timeToTargetPos = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "Linked to m_overrideMoveCurve");
-        public static readonly UpdateField m_timeToTargetUnk1205Curve = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "Linked to m_unk1205Curve");
+        public static readonly UpdateField m_timeToTargetShape = new UpdateField(typeof(uint), UpdateFieldFlag.None, comment: "Linked to m_overrideShapeCurve");
         public static readonly UpdateField m_spellID = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_spellForVisuals = new UpdateField(typeof(int), UpdateFieldFlag.None);
         public static readonly UpdateField m_spellVisual = new UpdateField(typeof(JamMirrorSpellCastVisual_C), UpdateFieldFlag.None);

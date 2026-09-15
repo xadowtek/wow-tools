@@ -57,8 +57,8 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField leaverInfo = new UpdateField(typeof(JamMirrorLeaverInfo_C), UpdateFieldFlag.None);
         public static readonly UpdateField spectateTarget = new UpdateField(typeof(WowGuid), UpdateFieldFlag.None);
         public static readonly UpdateField worldLootObjectInventorySwapSlot = new UpdateField(typeof(int), UpdateFieldFlag.None);
-        public static readonly UpdateField visualItemReplacements = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField visibleEquipableSpells = new UpdateField(typeof(ItemInstance[]), UpdateFieldFlag.None, 16);
+        public static readonly UpdateField visualItemReplacements = new UpdateField(typeof(DynamicUpdateField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField plunderstormItemDisplayID = new UpdateField(typeof(uint[]), UpdateFieldFlag.None, 19);
         public static readonly UpdateField declinedNames = new UpdateField(typeof(BlzOptionalField<JamMirrorDeclinedNames_C>), UpdateFieldFlag.None);
         public static readonly UpdateField personalTabard = new UpdateField(typeof(JamMirrorCustomTabardInfo_C), UpdateFieldFlag.None);

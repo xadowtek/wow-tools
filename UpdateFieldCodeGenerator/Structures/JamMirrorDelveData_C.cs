@@ -13,5 +13,6 @@ namespace UpdateFieldCodeGenerator.Structures
         public static readonly UpdateField m_playersEligibleForRewards = new UpdateField(typeof(BlzVectorField<WowGuid>), UpdateFieldFlag.None);
         public static readonly UpdateField m_activeOptionalAffixIDs = new UpdateField(typeof(BlzVectorField<int>), UpdateFieldFlag.None);
         public static readonly UpdateField m_restrictingRewardPlayers = new UpdateField(typeof(Bits), UpdateFieldFlag.None, bitSize: 1, comment: "Restricts rewards to players in m_owners if set to true. Intended to prevent rewarwding players that join in-progress delve?");
+        public static readonly UpdateField m_isLfg = new UpdateField(typeof(Bits), UpdateFieldFlag.None, bitSize: 1);
     }
 }
